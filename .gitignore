@@ -2,6 +2,7 @@
 venv/
 env/
 ENV/
+.venv
 
 # Python
 __pycache__/
@@ -32,3 +33,6 @@ logs/*.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Temp files
+/misc
