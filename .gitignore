@@ -1,0 +1,34 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Data files (too large for GitHub)
+*.csv
+data/raw/
+data/processed/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs 
+logs/*.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
