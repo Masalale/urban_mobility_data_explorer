@@ -1,12 +1,24 @@
+#!/usr/bin/env python3
+""" Clean the raw NYC data from the trains.csv file """
+
 import pandas as pd
 import numpy as np
 import logging
 from datetime import datetime
+from math import radians, cos, sin, asin, sqrt
 
 # Setup logging
 logging.basicConfig(filename='logs/excluded_records.log',
                     level=logging.INFO,
                     format='%(asctime)s - %(message)s')
+
+# Calculation using haversine formula to get the distance between two places
+def haversine(lon1, lat1, lon2, lat2):
+    """Calculate distance in km between two points on earth"""
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    dlon, dlat = lon2 - lon1, lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    return 6371 * 2 * asin(sqrt(a))
 
 # Load raw data
 df = pd.read_csv('data/train.csv')
@@ -37,11 +49,30 @@ for idx, row in invalid_trips.iterrows():
     logging.info(f"Excluded trip {row['id']} due to invalid coordinates or duration")
 df = df[valid_trips]
 
-# Step 4: Normalize timestamps 
+# Step 4: Normalize timestamps
 df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
 df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
 
-#Step 5: Normalize categorical fields
+# Step 5: Calculate derived features
+df['trip_distance'] = df.apply(
+    lambda r: haversine(r['pickup_longitude'], r['pickup_latitude'],
+                       r['dropoff_longitude'], r['dropoff_latitude']), axis=1
+)
+df['trip_speed'] = (df['trip_distance'] / df['trip_duration']) * 3600
+
+# Step 6: Data validation
+print("Validating data...")
+initial = len(df)
+df = df[
+    (df['passenger_count'] > 0) &
+    (df['trip_duration'] > 0) &
+    (df['trip_distance'] >= 0) &
+    (df['trip_speed'].notna()) &
+    (df['trip_speed'] != float('inf'))
+]
+print(f"  Removed {initial - len(df):,} invalid records")
+
+# Step 7: Normalize categorical fields
 df['store_and_fwd_flag'] = df['store_and_fwd_flag'].map({'Y': 1, 'N': 0})
 
 # Save cleaned dataset
