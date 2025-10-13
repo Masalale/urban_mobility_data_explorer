@@ -13,8 +13,7 @@ __pycache__/
 
 # Data files (too large for GitHub)
 *.csv
-data/raw/
-data/processed/
+data/
 
 # Database
 *.db
