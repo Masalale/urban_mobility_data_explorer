@@ -13,8 +13,7 @@ __pycache__/
 
 # Data files (too large for GitHub)
 # Ignore raw and processed data directories and large CSVs
-data/raw/
-data/processed/
+data/
 *.csv
 
 # Database
