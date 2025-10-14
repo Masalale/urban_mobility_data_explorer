@@ -9,7 +9,7 @@ from pathlib import Path
 app = Flask(__name__)
 
 # Path to database
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR.parent / "database" / "taxi_data.db"
 
 # Routes to use in API
