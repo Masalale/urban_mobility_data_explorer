@@ -6,13 +6,15 @@ from flask import Flask, jsonify, request
 import sqlite3
 from pathlib import Path
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Path to database
-BASE_DIR = Path(_file_).parent
+BASE_DIR = Path(__file__).parent
 DB_PATH = BASE_DIR.parent / "database" / "taxi_data.db"
 
+# Routes to use in API
 def get_connection():
+    """Create and return the SQLite connection"""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row  # Return rows as dictionaries
     return conn
@@ -44,8 +46,6 @@ def get_fares():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-if _name_ == "_main_":
-    app.run(debug=True)
 @app.route('/trips/by_date', methods=['GET'])
 def trips_by_date():
     """Filter trips by pickup date (YYYY-MM-DD)"""
@@ -80,5 +80,5 @@ def trips_by_distance():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     app.run(debug=True) 
