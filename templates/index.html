@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Mobility Data Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Urban Mobility Data Explorer</h1>
+            <p class="subtitle">Interactive dashboard analyzing urban mobility patterns</p>
+        </header>
+
+        <!-- Filters and Sorting section -->
+        <section id="filters" class="card">
+
+            <h2 id="filters-title">Filters & Controls</h2>
+            <div class="filters-grid">
+
+                <!-- Search by Trip ID -->
+                <div class="filter-group">
+                    <label for="search-id">Search by Trip ID</label>
+                    <input type="text" id="search-id" placeholder="e.g., id2875421" class="filter-input" />
+                </div>
+
+                <!-- Vendor Filter -->
+                <div class="filter-group">
+                    <label for="filter-vendor">Vendor</label>
+                    <select id="filter-vendor" class="filter-select">
+                        <option value="">All Vendors</option>
+                        <option value="1">Vendor 1</option>
+                        <option value="2">Vendor 2</option>
+                        <option value="3">Vendor 3</option>
+                    </select>
+                </div>
+
+                <!-- filter by no. of Passengers -->
+                <div class="filter-group">
+                    <label for="filter-passengers">Passengers</label>
+                    <select id="filter-passengers" class="filter-select">
+                        <option value="">All</option>
+                        <option value="1">1 passenger</option>
+                        <option value="2">2 passengers</option>
+                        <option value="3">3 passengers</option>
+                        <option value="4">4 passengers</option>
+                        <option value="5">5 passengers</option>
+                        <option value="6+">6+ passengers</option>
+                    </select>
+                </div>
+
+                <!-- filter by Trip Duration Range -->
+                <div class="filter-group">
+                    <label for="filter-duration"> Trip Duration</label>
+                    <select id="filter-duration" class="filter-select">
+                        <option value="">All Durations</option>
+                        <option value="0-300">0–5 minutes</option>
+                        <option value="300-600">5–10 minutes</option>
+                        <option value="600-900">10–15 minutes</option>
+                        <option value="900-1800">15–30 minutes</option>
+                        <option value="1800+">30+ minutes</option>
+                    </select>
+                </div>
+
+                <!-- filter by Pickup Location -->
+                <div class="filter-group">
+                    <label for="filter-location">Pickup Area</label>
+                    <select id="filter-location" class="filter-select">
+                        <option value="">All Locations</option>
+                        <option value="midtown">Midtown</option>
+                        <option value="downtown">Downtown</option>
+                        <option value="uptown">Uptown</option>
+                        <option value="brooklyn">Brooklyn</option>
+                    </select>
+                </div>
+
+                <!-- Filter using Fare Range -->
+                <div class="filter-group">
+                    <label for="filter-fare">Fare per KM</label>
+                    <select id="filter-fare" class="filter-select">
+                        <option value="">All Fares</option>
+                        <option value="0-2">Below $2</option>
+                        <option value="2-3">$2–$3</option>
+                        <option value="3-4">$3–$4</option>
+                        <option value="4+">Above $4</option>
+                    </select>
+                </div>
+
+                <!-- Filter by Month -->
+                <div class="filter-group">
+                    <label for="filter-month">Month</label>
+                    <select id="filter-month" class="filter-select">
+                        <option value="">All Months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                    </select>
+                </div>
+
+                <!-- Sorting for the appropriate data -->
+                <div class="filter-group">
+                    <label for="sort-by">Sort By</label>
+                    <select id="sort-by" class="filter-select">
+                        <option value="trip_duration">Trip Duration</option>
+                        <option value="fare_per_km">Fare per KM</option>
+                        <option value="speed">Speed</option>
+                        <option value="distance">Distance</option>
+                    </select>
+                </div>
+
+                <!-- Filter Action buttons -->
+                <div class="filter-group filter-actions">
+                    <button id="apply-filters" class="btn-apply">
+                        Apply Filters
+                    </button>
+
+                    <button id="reset-filters" class="btn-reset">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="summary-section">
+            <div class="card summaries-header">
+                <h2 id="summary-title" class="section-title">Some Key Statistics:</h2>
+                <p class="section-subtitle">
+                    New York presented us with these key statistics from the dataset
+                </p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                            <polyline points="16 7 22 7 22 13"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Trips In New York</p>
+                        <h2 id="stat-total-trips">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Avg Duration</p>
+                        <h2 id="stat-avg-duration">0s</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-purple">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Avg Passengers</p>
+                        <h2 id="stat-avg-passengers">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Routes Tracked</p>
+                        <h2 id="stat-routes">0</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Tabs -->
+        <section id="visualizations" class="tabs-container">
+            <h2 id="charts-title" class="sr-only">Visualizations</h2>
+            <div class="tabs-list">
+                <button class="tab-trigger active" data-tab="duration">Trip Duration</button>
+                <button class="tab-trigger" data-tab="passengers">Passengers</button>
+                <button class="tab-trigger" data-tab="time">Time of Day</button>
+                <button class="tab-trigger" data-tab="map">Pickup Locations</button>
+            </div>
+
+            <div class="tab-content active" id="tab-duration">
+                <div class="card">
+                    <h3>Trip Duration Distribution (Minutes)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-duration"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-passengers">
+                <div class="card">
+                    <h3>Passenger Count Distribution</h3>
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <canvas id="chart-passengers-pie"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-passengers-bar"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-time">
+                <div class="card">
+                    <h3>Trips by Time of Day</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-time"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-map">
+                <div class="card">
+                    <h3>Pickup Location Distribution</h3>
+                    <div class="chart-container chart-container-large">
+                        <canvas id="chart-map"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table -->
+        <section id="table-section" class="card">
+            <h2 id="data-title">Trip Details</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="id">
+                                Trip ID
+                                <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-sort="vendor_id">
+                                Vendor
+                                <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-sort="pickup_datetime">
+                                Pickup Time
+                                <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-sort="trip_duration">
+                                Duration (min)
+                                <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-sort="passenger_count">
+                                Passengers
+                                <span class="sort-icon"></span>
+                            </th>
+                            <th>Pickup Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Table rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

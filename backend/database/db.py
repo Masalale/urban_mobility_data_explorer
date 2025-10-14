@@ -6,9 +6,9 @@ import pandas as pd
 from pathlib import Path
 
 
-def create_database(db_path='data/database/nyc_taxi.db',
-                    data_path='data/clean_trips.csv',
-                    schema_path='data/database/schema.sql'):
+def create_database(db_path='backend/database/nyc_taxi.db',
+                    data_path='backend/clean_trips.csv',
+                    schema_path='backend/database/schema.sql'):
     """ Initialize the database schema and load data """
 
     # Validate files exist

@@ -2,17 +2,17 @@
 # pip install flask
 # Run with: python backend/app.py
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import sqlite3
 from pathlib import Path
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../static", template_folder="../templates")
 CORS(app)
 
 # Path to database
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR.parent / "database" / "taxi_data.db"
+DB_PATH = BASE_DIR.parent / "database" / "nyc_taxi.db"
 
 # Routes to use in API
 def get_connection():
@@ -21,7 +21,13 @@ def get_connection():
     conn.row_factory = sqlite3.Row  # Return rows as dictionaries
     return conn
 
-@app.route('/trips', methods=['GET'])
+# Index route
+@app.route('/')
+def index():
+    """Serve the index HTML"""
+    return render_template("index.html")
+
+@app.route('/api/trips', methods=['GET'])
 def get_trips():
     """Get first 100 trips"""
     conn = get_connection()
@@ -29,7 +35,7 @@ def get_trips():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-@app.route('/trips/<trip_id>', methods=['GET'])
+@app.route('/api/trips/<trip_id>', methods=['GET'])
 def get_trip_by_id(trip_id):
     """Get one trip by its trip_id"""
     conn = get_connection()
@@ -40,7 +46,7 @@ def get_trip_by_id(trip_id):
     else:
         return jsonify({"error": "Trip not found"}), 404
 
-@app.route('/fares', methods=['GET'])
+@app.route('/api/fares', methods=['GET'])
 def get_fares():
     """Get first 100 fare records"""
     conn = get_connection()
@@ -48,7 +54,7 @@ def get_fares():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-@app.route('/trips/by_date', methods=['GET'])
+@app.route('/api/trips/by_date', methods=['GET'])
 def trips_by_date():
     """Filter trips by pickup date (YYYY-MM-DD)"""
     date = request.args.get("date")
@@ -66,9 +72,9 @@ def trips_by_date():
     return jsonify([dict(row) for row in rows])
 
 
-@app.route('/trips/by_distance', methods=['GET'])
+@app.route('/api/trips/by_distance', methods=['GET'])
 def trips_by_distance():
-    """Filter fares by trip distance range"""
+    """Filter trips by trip distance range"""
     min_d = float(request.args.get("min", 0))
     max_d = float(request.args.get("max", 10))
 
