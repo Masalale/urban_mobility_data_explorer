@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def create_database(db_path='backend/database/nyc_taxi.db',
-                    data_path='backend/clean_trips.csv',
+                    data_path='data/processed/clean_trips.csv',
                     schema_path='backend/database/schema.sql'):
     """ Initialize the database schema and load data """
 

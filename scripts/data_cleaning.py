@@ -6,9 +6,12 @@ import numpy as np
 import logging
 from datetime import datetime
 from math import radians, cos, sin, asin, sqrt
+from pathlib import Path
 
 # Setup logging
-logging.basicConfig(filename='logs/excluded_records.log',
+BASE_DIR = Path(__file__).resolve().parent.parent
+LOG_PATH = BASE_DIR / 'backend' / 'logs' / 'excluded_records.log'
+logging.basicConfig(filename=str(LOG_PATH),
                     level=logging.INFO,
                     format='%(asctime)s - %(message)s')
 
@@ -21,7 +24,8 @@ def haversine(lon1, lat1, lon2, lat2):
     return 6371 * 2 * asin(sqrt(a))
 
 # Load raw data
-df = pd.read_csv('data/train.csv')
+DATA_PATH = BASE_DIR / 'data' / 'raw' / 'train.csv'
+df = pd.read_csv(DATA_PATH)
 
 # Step 1: Drop duplicates
 duplicates = df.duplicated().sum()
@@ -76,5 +80,6 @@ print(f"  Removed {initial - len(df):,} invalid records")
 df['store_and_fwd_flag'] = df['store_and_fwd_flag'].map({'Y': 1, 'N': 0})
 
 # Save cleaned dataset
-df.to_csv('data/clean_trips.csv', index=False)
-print("Data cleaned and saved to 'data/clean_trips.csv'")
+OUTPUT_PATH = BASE_DIR / 'data' / 'processed' / 'clean_trips.csv'
+df.to_csv(OUTPUT_PATH, index=False)
+print(f"Data cleaned and saved to '{OUTPUT_PATH}'")

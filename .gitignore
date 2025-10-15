@@ -21,7 +21,9 @@ __pycache__/
 *.sqlite3
 
 # Logs 
-logs/*.txt
+backend/logs/*.txt
+backend/logs/*.log
+*.log
 
 # IDE
 .vscode/
@@ -34,4 +36,5 @@ logs/*.txt
 Thumbs.db
 
 # Temp files
-/misc
+*.tmp
+*.bak

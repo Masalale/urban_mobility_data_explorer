@@ -12,7 +12,7 @@ CORS(app)
 
 # Path to database
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR.parent / "database" / "nyc_taxi.db"
+DB_PATH = BASE_DIR / "database" / "nyc_taxi.db"
 
 # Routes to use in API
 def get_connection():
