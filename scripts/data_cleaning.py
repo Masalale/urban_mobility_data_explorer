@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """ Clean the raw NYC data from the trains.csv file """
 
+import urllib.request
 import pandas as pd
 import numpy as np
 import logging
 from datetime import datetime
 from math import radians, cos, sin, asin, sqrt
 from pathlib import Path
+import os
 
 # Setup logging
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +16,19 @@ LOG_PATH = BASE_DIR / 'backend' / 'logs' / 'excluded_records.log'
 logging.basicConfig(filename=str(LOG_PATH),
                     level=logging.INFO,
                     format='%(asctime)s - %(message)s')
+
+# Download raw data if not present
+DATA_DIR = BASE_DIR / 'data' / 'raw'
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+DATA_PATH = BASE_DIR / 'data' / 'raw' / 'train.csv'
+
+if not DATA_PATH.exists():
+    print("Downloading raw data...")
+    url = "https://github.com/Masalale/urban_mobility_data_explorer/releases/download/Raw/train.csv"
+    urllib.request.urlretrieve(url, DATA_PATH)
+    print(f"Data downloaded to '{DATA_PATH}'")
+else:
+    print(f"Data already exists at '{DATA_PATH}'")
 
 # Calculation using haversine formula to get the distance between two places
 def haversine(lon1, lat1, lon2, lat2):
@@ -24,7 +39,6 @@ def haversine(lon1, lat1, lon2, lat2):
     return 6371 * 2 * asin(sqrt(a))
 
 # Load raw data
-DATA_PATH = BASE_DIR / 'data' / 'raw' / 'train.csv'
 df = pd.read_csv(DATA_PATH)
 
 # Step 1: Drop duplicates
@@ -58,10 +72,13 @@ df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
 df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
 
 # Step 5: Calculate derived features
+print("  Computing trip distances using Haversine formula...")
 df['trip_distance'] = df.apply(
     lambda r: haversine(r['pickup_longitude'], r['pickup_latitude'],
                        r['dropoff_longitude'], r['dropoff_latitude']), axis=1
 )
+
+print("  Computing trip speeds...")
 df['trip_speed'] = (df['trip_distance'] / df['trip_duration']) * 3600
 
 # Step 6: Data validation
