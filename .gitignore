@@ -1,41 +1,28 @@
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
+# Python Virtual Environment
+.venv/
 
-# Python
+# Python Cache
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+*.pyc
 
-# Data files (too large for GitHub)
-# Ignore raw and processed data directories and large CSVs
-*.csv
+# Large Data Files (keep structure, ignore data)
+data/raw/*.csv
+data/processed/*.csv
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# Working Database (keep dump, ignore working DB)
+backend/database/*.db
 
-# Logs 
+# Log Files
 backend/logs/*.txt
 backend/logs/*.log
-*.log
 
-# IDE
-.vscode/
+# IDE Files
 .idea/
-*.swp
-*.swo
+.vscode/
 
-# OS
+# OS Files
 .DS_Store
-Thumbs.db
 
-# Temp files
+# Temporary Files
 *.tmp
-*.bak
-/docs
+misc/
