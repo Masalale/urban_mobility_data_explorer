@@ -88,7 +88,6 @@ if total_missing > 0:
             missing_count = df[col].isnull().sum()
             print(f"  {col}: {missing_count:,} missing")
             logging.info(f"Column '{col}' has {missing_count} missing values")
-<<<<<<< HEAD
     
     # Log some examples of records with missing values
     records_with_missing = df[df.isnull().any(axis=1)]
@@ -96,9 +95,6 @@ if total_missing > 0:
         logging.info(f"Excluded trip {row['id']} due to missing values")
     logging.info(f"Total records with missing values removed: {len(records_with_missing)}")
     
-=======
-
->>>>>>> a5349d5d5e56818c96e91a34256a458c0095665f
     df = df.dropna()
     print(f"Records remaining: {len(df):,}")
 else:
@@ -205,7 +201,6 @@ df['idle_time_ratio'] = np.where(df['trip_duration_seconds'] > 0,
 print("Validating data...")
 initial_count = len(df)
 
-<<<<<<< HEAD
 # Find invalid trips before removing them
 invalid_mask = ~(
     (df['trip_speed_kmh'] > 0) & (df['trip_speed_kmh'] <= 120) &
@@ -231,19 +226,12 @@ for idx, row in invalid_trips_validation.head(20).iterrows():
         reasons.append("invalid distance")
     if not (row['passenger_count'] > 0 and row['passenger_count'] <= 9):
         reasons.append(f"invalid passenger count {row['passenger_count']}")
-    
     logging.info(f"Excluded trip {row['id']} - {', '.join(reasons)}")
 
 logging.info(f"Total records removed in final validation: {len(invalid_trips_validation)}")
 
 # Apply the filter
 df = df[~invalid_mask]
-=======
-df = df[(df['trip_speed_kmh'] > 0) & (df['trip_speed_kmh'] <= 120) & (df['trip_duration_seconds'] > 0) & (
-        df['trip_distance_km'] > 0) & (df['passenger_count'] > 0) & (df['passenger_count'] <= 9) & (
-            df['pickup_latitude'].between(40.5, 41.0)) & (df['pickup_longitude'].between(-74.5, -73.5)) & (
-            df['dropoff_latitude'].between(40.5, 41.0)) & (df['dropoff_longitude'].between(-74.5, -73.5))]
->>>>>>> a5349d5d5e56818c96e91a34256a458c0095665f
 
 removed_count = initial_count - len(df)
 if removed_count > 0:
@@ -300,7 +288,6 @@ except Exception as e:
     logging.error(f"Failed to save cleaned data: {e}")
     exit(1)
 
-<<<<<<< HEAD
 # Log summary
 logging.info("=" * 50)
 logging.info("DATA CLEANING SUMMARY")
@@ -310,6 +297,3 @@ logging.info(f"Total removed: {initial_load_count - len(df)}")
 logging.info("=" * 50)
 
 print("Data cleaning completed!")
-=======
-print("Data cleaning completed!")
->>>>>>> a5349d5d5e56818c96e91a34256a458c0095665f
