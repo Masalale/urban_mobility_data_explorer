@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    image: masalale/urban-mobility-explorer:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/database:/app/backend/database
+      - ./backend/logs:/app/backend/logs
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped

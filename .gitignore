@@ -1,28 +1,35 @@
-# Python Virtual Environment
+# Python
 .venv/
-
-# Python Cache
+venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Large Data Files (keep structure, ignore data)
+# Data Files (keep structure, ignore data)
 data/raw/*.csv
 data/processed/*.csv
 
-# Working Database (keep dump, ignore working DB)
+# Database (keep dump, ignore working DB)
 backend/database/*.db
 
-# Log Files
+# Logs
 backend/logs/*.txt
 backend/logs/*.log
 
-# IDE Files
+# IDE
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# OS Files
+# OS
 .DS_Store
+Thumbs.db
 
-# Temporary Files
+# Temporary
 *.tmp
 misc/
+
+# Docker (no need in git repo)
+.dockerignore

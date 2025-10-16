@@ -330,3 +330,37 @@ Documentation: [Google Docs Link](https://docs.google.com/document/d/1sRXjHF9t4Y
 - **Fadhili Lumumba** - Data Cleaning & Backend Development
 - **Clarence Chomba** - Database Design & API Implementation  
 - **Neville Iregi** - Frontend Development & Visualization
+
+---
+
+## Docker Deployment
+
+The easiest way to run this application is using our pre-built Docker container from Docker Hub.
+
+**Docker Hub Repository**: [masalale/urban-mobility-explorer](https://hub.docker.com/r/masalale/urban-mobility-explorer)
+
+#### Option 1: Using Docker Compose (Simplest)
+
+```bash
+# Clone the repository (only need docker-compose.yml)
+git clone https://github.com/Masalale/urban_mobility_data_explorer.git
+cd urban_mobility_data_explorer
+
+# Start the application
+docker-compose up
+```
+
+#### Option 2: Using Docker Run
+
+```bash
+docker pull masalale/urban-mobility-explorer:latest
+docker run -p 5000:5000 masalale/urban-mobility-explorer:latest
+```
+
+The Docker container includes:
+- All dependencies pre-installed
+- Data processing pipeline pre-configured
+- Database automatically created on first run
+- Flask server ready to serve on port 5000
+
+Access the application at `http://localhost:5000`
