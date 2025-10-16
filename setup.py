@@ -8,10 +8,17 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 
 print("Setting up project\n")
-subprocess.run([sys.executable, "scripts/data_cleaning.py"], cwd=BASE_DIR, check=True)
+
+# Check if files already exist
+clean_data_path = BASE_DIR / "data" / "processed" / "clean_trips.csv"
+db_path = BASE_DIR / "backend" / "database" / "nyc_taxi.db"
+
+if not clean_data_path.exists():
+    subprocess.run([sys.executable, "scripts/data_cleaning.py"], cwd=BASE_DIR, check=True)
 
 print("\n")
-subprocess.run([sys.executable, "backend/database/db.py"], cwd=BASE_DIR, check=True)
+if not db_path.exists():
+    subprocess.run([sys.executable, "backend/database/db.py"], cwd=BASE_DIR, check=True)
 
 print("\nSetup complete!")
 
