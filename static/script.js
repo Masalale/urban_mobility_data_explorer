@@ -465,30 +465,52 @@ function setupSorting() {
     });
 }
 
-// Sort trips
+// Sort trips manually without using built-insort
 function sortTrips() {
-    trips.sort((a, b) => {
-        let valueA = a[currentSort.field];
-        let valueB = b[currentSort.field];
-        
-        // Handle dates
-        if (valueA instanceof Date) {
-            valueA = valueA.getTime();
-            valueB = valueB.getTime();
+    const field = currentSort.field;
+    const direction = currentSort.direction;
+
+    trips = selectionSort(trips, field, direction);
+}
+
+// Selection sort algorithm implementation
+function selectionSort(trips_array, key, direction = 'asc') {
+    const trip_arr = [...trips_array];
+    const n = trip_arr.length;
+
+    for (let i = 0; i < n - 1; i++) {
+        let actualIndex = i;
+
+        for (let j = i + 1; j < n; j++) {
+            let valueA = trip_arr[j][key];
+            let valueB = trip_arr[actualIndex][key];
+
+            // Handle dates
+            if (valueA instanceof Date) valueA = valueA.getTime();
+            if (valueB instanceof Date) valueB = valueB.getTime();
+
+            // Handle strings
+            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+
+            const condition = direction === 'asc'
+                ? valueA < valueB
+                : valueA > valueB;
+
+            if (condition) {
+                actualIndex = j;
+            }
         }
-        
-        // Handle strings
-        if (typeof valueA === 'string') {
-            valueA = valueA.toLowerCase();
-            valueB = valueB.toLowerCase();
+
+        // Swap elements
+        if (actualIndex !== i) {
+            const temp = trip_arr[i];
+            trip_arr[i] = trip_arr[actualIndex];
+            trip_arr[actualIndex] = temp;
         }
-        
-        if (currentSort.direction === 'asc') {
-            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-        } else {
-            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
-        }
-    });
+    }
+
+    return trip_arr;
 }
 
 // Update trip count display
