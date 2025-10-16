@@ -1,5 +1,6 @@
 # To run this Flask app, make sure Flask is installed:
 # pip install flask
+#pip install flask-cors
 # Run with: python backend/app.py
 
 from flask import Flask, jsonify, request, render_template
@@ -80,7 +81,7 @@ def trips_by_distance():
 
     conn = get_connection()
     query = """
-        SELECT * FROM fares
+        SELECT * FROM trips
         WHERE trip_distance_km BETWEEN ? AND ?
         LIMIT 100
     """
