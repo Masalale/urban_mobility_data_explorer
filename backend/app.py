@@ -53,14 +53,11 @@ def get_trip_by_id(trip_id):
     else:
         return jsonify({"error": "Trip not found"}), 404
 
-<<<<<<< HEAD
 # @app.route('/api/fares', methods=['GET'])
 # def get_fares():
-=======
 
-@app.route('/api/fares', methods=['GET'])
-def get_fares():
->>>>>>> b0b1ad2d59a1aae887c4d0a052f568d07e01ca0b
+#@app.route('/api/fares', methods=['GET'])
+#def get_fares():
     """Get first 100 fare records"""
     conn = get_connection()
     rows = conn.execute("SELECT * FROM fares LIMIT 100").fetchall()
@@ -98,13 +95,12 @@ def trips_by_distance():
             SELECT *
             FROM trips
             WHERE trip_distance_km BETWEEN ? AND ?
-            LIMIT 100 \
+            LIMIT 100
             """
     rows = conn.execute(query, (min_d, max_d)).fetchall()
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-<<<<<<< HEAD
 @app.route('/api/trips/by_location', methods=['GET'])
 def trips_by_location():
     """Filter trips by pickup location zone (e.g., midtown, downtown)"""
@@ -126,8 +122,6 @@ def trips_by_location():
     conn.close()
     return jsonify([dict(row) for row in rows])
 
-=======
->>>>>>> b0b1ad2d59a1aae887c4d0a052f568d07e01ca0b
 
 if __name__ == "__main__":
     app.run(debug=True)
