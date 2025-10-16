@@ -5,6 +5,7 @@
     box-sizing: border-box;
 }
 
+/* Color Variables to use */
 :root {
     --color-background: #ffffff;
     --color-foreground: #0a0a0a;
@@ -22,6 +23,7 @@
     --color-orange-light: #ffedd5;
 }
 
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     :root {
         --color-background: #0a0a0a;
@@ -37,6 +39,7 @@
     }
 }
 
+/* Body and Container */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--color-background);
@@ -135,7 +138,7 @@ body {
 
 .stat-content h2 {
     margin: 0;
-    color: #0f172a;
+    color: #131ad8;
     font-size: 1.5rem;
     font-weight: 700;
 }
@@ -481,7 +484,7 @@ section {
   margin-bottom: 32px;
 }
 
-/* === Improved Summary Layout === */
+/* Improved Summary Layout */
 .summary-section {
   text-align: center;
 }
@@ -492,7 +495,7 @@ section {
   background: transparent;
 }
 
-/* === Cards Shadow Polish === */
+/* Cards Shadow */
 .card {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: box-shadow 0.25s ease;
@@ -502,7 +505,7 @@ section {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* === Titles Consistency === */
+/* Titles Consistency */
 .card h2, .card h3 {
   color: var(--color-blue);
 }
@@ -517,7 +520,7 @@ section {
   font-size: 1rem;
 }
 
-/* === Accessibility === */
+/* For Accessibility */
 .sr-only {
   position: absolute;
   left: -9999px;
@@ -526,10 +529,62 @@ section {
   overflow: hidden;
 }
 
-/* === Responsive Tweaks === */
+/* Responsive styles */
 @media (max-width: 768px) {
   section {
     margin-top: 24px;
     margin-bottom: 24px;
   }
+}
+
+/* Insights part styles */
+#tab-insights {
+  background: var(--color-card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  margin-top: 2rem;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+    
+.insight-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.insight-card {
+  background: var(--color-bg);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  flex: 1 1 220px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.insight-story {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-style: italic;
+  line-height: 1.6;
+  color: #0a19e4;
+}
+
+/* Chart caption styles*/
+.chart-caption {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #0d15f2;
+  font-size: 0.9rem;
+  font-style: italic;
 }

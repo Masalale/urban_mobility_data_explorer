@@ -14,13 +14,13 @@
     <div class="container">
         <header class="header">
             <h1>Urban Mobility Data Explorer</h1>
-            <p class="subtitle">Interactive dashboard analyzing urban mobility patterns</p>
+            <p class="subtitle">Interactive dashboard analyzing urban mobility patterns in New York, USA</p>
         </header>
 
         <!-- Filters and Sorting section -->
         <section id="filters" class="card">
 
-            <h2 id="filters-title">Filters & Controls</h2>
+            <h2 id="filters-title">Filters & Sorting section</h2>
             <div class="filters-grid">
 
                 <!-- Search by Trip ID -->
@@ -71,24 +71,12 @@
                     <label for="filter-location">Pickup Area</label>
                     <select id="filter-location" class="filter-select">
                         <option value="">All Locations</option>
-                        <option value="midtown">Midtown</option>
-                        <option value="downtown">Downtown</option>
-                        <option value="uptown">Uptown</option>
-                        <option value="brooklyn">Brooklyn</option>
-                        <option value="queens">Queens</option>
-                        <option value="bronx">Bronx</option>
-                    </select>
-                </div>
-
-                <!-- Filter using Fare Range -->
-                <div class="filter-group">
-                    <label for="filter-fare">Fare per KM</label>
-                    <select id="filter-fare" class="filter-select">
-                        <option value="">All Fares</option>
-                        <option value="0-2">Below $2</option>
-                        <option value="2-3">$2–$3</option>
-                        <option value="3-4">$3–$4</option>
-                        <option value="4+">Above $4</option>
+                        <option value="midtown">midtown</option>
+                        <option value="downtown">downtown</option>
+                        <option value="uptown">uptown</option>
+                        <option value="brooklyn">brooklyn</option>
+                        <option value="queens">queens</option>
+                        <option value="bronx">bronx</option>
                     </select>
                 </div>
 
@@ -103,6 +91,12 @@
                         <option value="4">April</option>
                         <option value="5">May</option>
                         <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
                     </select>
                 </div>
 
@@ -119,11 +113,11 @@
 
                 <!-- Filter Action buttons -->
                 <div class="filter-group filter-actions">
-                    <button id="apply-filters" class="btn-apply">
+                    <button id="apply-filters" type="button" class="btn-apply">
                         Apply Filters
                     </button>
 
-                    <button id="reset-filters" class="btn-reset">
+                    <button id="reset-filters" type="button" class="btn-reset">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
@@ -141,9 +135,9 @@
         <!-- Summary Section -->
         <section id="summary" class="summary-section">
             <div class="card summaries-header">
-                <h2 id="summary-title" class="section-title">Some Key Statistics:</h2>
+                <h2 id="summary-title" class="section-title">Statistics Summary:</h2>
                 <p class="section-subtitle">
-                    New York presented us with these key statistics from the dataset
+                    Here is a Summary of the NYC trip dataset
                 </p>
             </div>
 
@@ -213,53 +207,87 @@
         <!-- Tabs -->
         <section id="visualizations" class="tabs-container">
             <h2 id="charts-title" class="sr-only">Visualizations</h2>
+
             <div class="tabs-list">
                 <button class="tab-trigger active" data-tab="duration">Trip Duration</button>
                 <button class="tab-trigger" data-tab="passengers">Passengers</button>
                 <button class="tab-trigger" data-tab="time">Time of Day</button>
                 <button class="tab-trigger" data-tab="map">Pickup Locations</button>
+                <button class="tab-trigger" data-tab="insights">Insights</button>
             </div>
 
+            <!-- Trip Duration -->
             <div class="tab-content active" id="tab-duration">
                 <div class="card">
                     <h3>Trip Duration Distribution (Minutes)</h3>
                     <div class="chart-container">
                         <canvas id="chart-duration"></canvas>
+                        <p class="chart-caption">
+                            Trip durations cluster below 30 minutes, showing short-distance city travel patterns.
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!-- Passengers -->
             <div class="tab-content" id="tab-passengers">
                 <div class="card">
                     <h3>Passenger Count Distribution</h3>
                     <div class="chart-grid">
                         <div class="chart-container">
                             <canvas id="chart-passengers-pie"></canvas>
+                            <p class="chart-caption">
+                                Most rides have 1–2 passengers, reflecting frequent solo and pair trips.
+                            </p>
                         </div>
                         <div class="chart-container">
                             <canvas id="chart-passengers-bar"></canvas>
+                            <p class="chart-caption">
+                                Bar chart shows people travelling in groups during peak times.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Time of Day -->
             <div class="tab-content" id="tab-time">
                 <div class="card">
                     <h3>Trips by Time of Day</h3>
                     <div class="chart-container">
                         <canvas id="chart-time"></canvas>
+                        <p class="chart-caption">
+                            Morning and evening peaks show people commuting to and from work in urban areas.
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!-- Map -->
             <div class="tab-content" id="tab-map">
                 <div class="card">
                     <h3>Pickup Location Distribution</h3>
                     <div class="chart-container chart-container-large">
                         <canvas id="chart-map"></canvas>
+                        <p class="chart-caption">
+                            Concentrated pickups near transport hubs indicate there is high mobility.
+                        </p>
                     </div>
                 </div>
             </div>
+
+            <!-- Insights Section -->
+        <div id="tab-insights" class="tab-content">
+            <h2 class="section-title">Insights from the Data</h2>
+
+            <div id="insights-text" class="insight-cards">
+                <p>Loading insights...</p>
+            </div>
+
+            <div id="story-section" class="insight-story">
+                <p>Loading interpretation...</p>
+            </div>
+        </div>
         </section>
 
         <!-- Data Table -->
@@ -293,7 +321,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <!-- Table rows will be inserted here -->
+                        <!-- Table rows are to be inserted here -->
                     </tbody>
                 </table>
             </div>
