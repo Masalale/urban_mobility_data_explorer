@@ -58,7 +58,9 @@ def haversine_vectorized(lon1, lat1, lon2, lat2):
 print("Loading raw data...")
 try:
     df = pd.read_csv(DATA_PATH)
+    initial_load_count = len(df)
     print(f"Loaded {len(df):,} records")
+    logging.info(f"Initial records loaded: {initial_load_count}")
 except Exception as e:
     print(f"Error loading data: {e}")
     exit(1)
@@ -87,6 +89,12 @@ if total_missing > 0:
             print(f"  {col}: {missing_count:,} missing")
             logging.info(f"Column '{col}' has {missing_count} missing values")
     
+    # Log some examples of records with missing values
+    records_with_missing = df[df.isnull().any(axis=1)]
+    for idx, row in records_with_missing.head(10).iterrows():
+        logging.info(f"Excluded trip {row['id']} due to missing values")
+    logging.info(f"Total records with missing values removed: {len(records_with_missing)}")
+    
     df = df.dropna()
     print(f"Records remaining: {len(df):,}")
 else:
@@ -103,8 +111,9 @@ invalid_count = (~valid_trips).sum()
 if invalid_count > 0:
     print(f"Found {invalid_count:,} trips with invalid coordinates")
     invalid_trips = df[~valid_trips]
-    for idx, row in invalid_trips.head(5).iterrows():
+    for idx, row in invalid_trips.head(10).iterrows():
         logging.info(f"Excluded trip {row['id']} due to invalid coordinates")
+    logging.info(f"Total records with invalid coordinates removed: {invalid_count}")
     df = df[valid_trips]
     print(f"Records remaining: {len(df):,}")
 else:
@@ -218,7 +227,8 @@ df['idle_time_ratio'] = np.where(
 print("Validating data...")
 initial_count = len(df)
 
-df = df[
+# Find invalid trips before removing them
+invalid_mask = ~(
     (df['trip_speed_kmh'] > 0) & (df['trip_speed_kmh'] <= 120) &
     (df['trip_duration_seconds'] > 0) &
     (df['trip_distance_km'] > 0) &
@@ -227,7 +237,28 @@ df = df[
     (df['pickup_longitude'].between(-74.5, -73.5)) &
     (df['dropoff_latitude'].between(40.5, 41.0)) &
     (df['dropoff_longitude'].between(-74.5, -73.5))
-]
+)
+
+invalid_trips_validation = df[invalid_mask]
+
+# Log examples with reasons
+for idx, row in invalid_trips_validation.head(20).iterrows():
+    reasons = []
+    if not (row['trip_speed_kmh'] > 0 and row['trip_speed_kmh'] <= 120):
+        reasons.append(f"invalid speed {row['trip_speed_kmh']:.1f} km/h")
+    if not row['trip_duration_seconds'] > 0:
+        reasons.append("invalid duration")
+    if not row['trip_distance_km'] > 0:
+        reasons.append("invalid distance")
+    if not (row['passenger_count'] > 0 and row['passenger_count'] <= 9):
+        reasons.append(f"invalid passenger count {row['passenger_count']}")
+    
+    logging.info(f"Excluded trip {row['id']} - {', '.join(reasons)}")
+
+logging.info(f"Total records removed in final validation: {len(invalid_trips_validation)}")
+
+# Apply the filter
+df = df[~invalid_mask]
 
 removed_count = initial_count - len(df)
 if removed_count > 0:
@@ -291,5 +322,13 @@ except Exception as e:
     print(f"Error saving data: {e}")
     logging.error(f"Failed to save cleaned data: {e}")
     exit(1)
+
+# Log summary
+logging.info("=" * 50)
+logging.info("DATA CLEANING SUMMARY")
+logging.info(f"Initial records: {initial_load_count}")
+logging.info(f"Final records: {len(df)}")
+logging.info(f"Total removed: {initial_load_count - len(df)}")
+logging.info("=" * 50)
 
 print("Data cleaning completed!")
