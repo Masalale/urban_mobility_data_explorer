@@ -6,8 +6,7 @@ import pandas as pd
 from pathlib import Path
 
 
-def create_database(db_path='backend/database/nyc_taxi.db',
-                    data_path='data/processed/clean_trips.csv',
+def create_database(db_path='backend/database/nyc_taxi.db', data_path='data/processed/clean_trips.csv',
                     schema_path='backend/database/schema.sql'):
     """ Initialize the database schema and load data """
 
@@ -22,7 +21,7 @@ def create_database(db_path='backend/database/nyc_taxi.db',
     cursor = conn.cursor()
     cursor.execute('PRAGMA foreign_keys = ON')
     cursor.execute('PRAGMA journal_mode = WAL')
-    
+
     # Performance optimizations for faster queries
     cursor.execute('PRAGMA cache_size = -64000')
     cursor.execute('PRAGMA temp_store = MEMORY')
@@ -41,34 +40,28 @@ def create_database(db_path='backend/database/nyc_taxi.db',
     print(f"Loaded {len(df):,} rows")
 
     # Validate required columns
-    required_columns = [
-        'id', 'vendor_id', 'pickup_datetime', 'dropoff_datetime',
-        'pickup_date', 'pickup_month', 'pickup_hour', 'pickup_day_of_week',
-        'pickup_day_name', 'is_pickup_weekend', 'is_pickup_peak_hour', 'time_of_day',
-        'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude',
-        'pickup_zone', 'dropoff_zone', 'passenger_count', 'store_and_fwd_flag',
-        'trip_distance_km', 'trip_duration_seconds', 'trip_duration_minutes',
-        'trip_speed_kmh', 'fare_per_km', 'idle_time_ratio', 'estimated_fare'
-    ]
-    
+    required_columns = ['id', 'vendor_id', 'pickup_datetime', 'dropoff_datetime', 'pickup_date', 'pickup_month',
+        'pickup_hour', 'pickup_day_of_week', 'pickup_day_name', 'is_pickup_weekend', 'is_pickup_peak_hour',
+        'time_of_day', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'pickup_zone',
+        'dropoff_zone', 'passenger_count', 'store_and_fwd_flag', 'trip_distance_km', 'trip_duration_seconds',
+        'trip_duration_minutes', 'trip_speed_kmh', 'fare_per_km', 'idle_time_ratio', 'estimated_fare']
+
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns in {data_path}: {missing_columns}\n\n"
-            f"Please run data cleaning first"
-        )
-    
+        raise ValueError(f"Missing required columns in {data_path}: {missing_columns}\n\n"
+                         f"Please run data cleaning first")
+
     # Rename id to trip_id for database key identification
     df = df.rename(columns={'id': 'trip_id'})
     required_columns[0] = 'trip_id'
-    
+
     # Insert into database in batches of 150,000 rows
     print(f"\nInserting {len(df):,} trips into database")
     batch_size = 150000
     for i in range(0, len(df), batch_size):
-        batch = df[required_columns].iloc[i:i+batch_size]
+        batch = df[required_columns].iloc[i:i + batch_size]
         batch.to_sql('trips', conn, if_exists='append', index=False)
-        print(f"Inserted {min(i+batch_size, len(df)):,} / {len(df):,} trips", end='\r')
+        print(f"Inserted {min(i + batch_size, len(df)):,} / {len(df):,} trips", end='\r')
 
     print(f"\nAll trips inserted successfully")
 
