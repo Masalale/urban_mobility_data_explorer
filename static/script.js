@@ -14,6 +14,7 @@ async function loadData() {
             dropoff_datetime: new Date(trip.dropoff_datetime),
             passenger_count: parseInt(trip.passenger_count),
             trip_duration: parseInt(trip.trip_duration)
+
         }));
 
         trips = [...allTrips];
@@ -29,6 +30,7 @@ async function loadData() {
         setupFilters();
         setupSorting();
         updateTripCount();
+        updateInsights();
 
     } catch (err) {
         console.error("Error loading trips:", err);
@@ -66,7 +68,7 @@ function parseCSV(csvData) {
     });
 }
 
-// Initialize the dashboard
+// Initialize dashboard with function
 $(document).ready(function() {
     loadData();
 });
@@ -79,7 +81,7 @@ function updateStats() {
     
     $('#stat-total-trips').text(totalTrips);
     $('#stat-avg-duration').text(Math.round(totalDuration / totalTrips) + 's');
-    $('#stat-avg-passengers').text((totalPassengers / totalTrips).toFixed(1));
+    $('#stat-avg-passengers').text(Math.round(totalPassengers / totalTrips));
     $('#stat-routes').text(totalTrips);
 }
 
@@ -345,7 +347,7 @@ function setupTabs() {
 
 // Setup filters
 function setupFilters() {
-    $('#search-id, #filter-vendor, #filter-passengers, #filter-duration, #filter-month').on('input change', applyFilters);
+    $('#search-id, #filter-vendor, #filter-passengers, #filter-duration, #filter-month, #filter-location').on('input change', applyFilters);
     
     $('#reset-filters').on('click', function() {
         $('#search-id').val('');
@@ -353,64 +355,82 @@ function setupFilters() {
         $('#filter-passengers').val('');
         $('#filter-duration').val('');
         $('#filter-month').val('');
+        $('#filter-location').val('');
         applyFilters();
     });
 }
 
 // Apply filters
-function applyFilters() {
+async function applyFilters() {
     const searchId = $('#search-id').val().toLowerCase();
     const filterVendor = $('#filter-vendor').val();
     const filterPassengers = $('#filter-passengers').val();
     const filterDuration = $('#filter-duration').val();
     const filterMonth = $('#filter-month').val();
-    
+    const filterLocation = $('#filter-location').val().toLowerCase();
+
     trips = allTrips.filter(trip => {
-        // Search by ID
-        if (searchId && !trip.id.toLowerCase().includes(searchId)) {
+        // Search by Trip ID
+        if (searchId && !trip.id.toLowerCase().includes(searchId)) 
             return false;
-        }
-        
-        // Filter by vendor
-        if (filterVendor && trip.vendor_id !== parseInt(filterVendor)) {
+
+        // Filter by Vendor
+        if (filterVendor && trip.vendor_id.toString() !== filterVendor) 
             return false;
-        }
-        
-        // Filter by passengers
+
+        // Filter by Passengers
         if (filterPassengers) {
-            const passengerCount = parseInt(filterPassengers);
-            if (passengerCount === 6 && trip.passenger_count < 6) {
+            if (filterPassengers === "6+" && trip.passenger_count < 6) 
                 return false;
-            } else if (passengerCount < 6 && trip.passenger_count !== passengerCount) {
+            else if (filterPassengers !== "6+" && trip.passenger_count.toString() !== filterPassengers) 
                 return false;
-            }
         }
-        
-        // Filter by duration
+
+        // Filter by Duration range
         if (filterDuration) {
-            const [min, max] = filterDuration.split('-').map(Number);
-            if (trip.trip_duration < min || (max && trip.trip_duration > max)) {
+            const [min, max] = filterDuration.split('-');
+            const duration = trip.trip_duration; // in seconds
+            if (max && duration < parseInt(min) || (max && duration > parseInt(max))) 
                 return false;
-            }
-        }
-        
-        // Filter by month
-        if (filterMonth) {
-            const month = parseInt(filterMonth);
-            if (trip.pickup_datetime.getMonth() !== month) {
+            if (!max && parseInt(min) && duration < parseInt(min)) 
                 return false;
-            }
         }
-        
+
+        // Filter by Month (based on pickup_datetime)
+        if (filterMonth && trip.pickup_datetime.getMonth() + 1 !== parseInt(filterMonth)) 
+            return false;
+
+        // Filter by Location — using pickup_latitude & longitude
+        if (filterLocation) {
+            const loc = filterLocation;
+            if (loc === "midtown" && !(trip.pickup_latitude >= 40.74 && trip.pickup_latitude <= 40.77)) 
+                return false;
+            if (loc === "downtown" && !(trip.pickup_latitude < 40.72)) 
+                return false;
+            if (loc === "uptown" && !(trip.pickup_latitude > 40.78)) 
+                return false;
+            if (loc === "brooklyn" && !(trip.pickup_longitude < -73.95)) 
+                return false;
+            if (loc === "queens" && !(trip.pickup_longitude > -73.95 && trip.pickup_latitude > 40.7)) 
+                return false;
+            if (loc === "bronx" && !(trip.pickup_latitude > 40.84)) 
+                return false;
+        }
+
         return true;
     });
-    
-    // Update everything with filtered data
+
+    // Update UI
     updateStats();
-    updateCharts();
     populateTable();
+    createDurationChart();
+    createPassengerCharts();
+    createTimeChart();
+    createMapChart();
     updateTripCount();
+    updateInsights();
 }
+
 
 // Update all charts
 function updateCharts() {
@@ -445,34 +465,124 @@ function setupSorting() {
     });
 }
 
-// Sort trips
+// Sort trips manually without using built-insort
 function sortTrips() {
-    trips.sort((a, b) => {
-        let valueA = a[currentSort.field];
-        let valueB = b[currentSort.field];
-        
-        // Handle dates
-        if (valueA instanceof Date) {
-            valueA = valueA.getTime();
-            valueB = valueB.getTime();
+    const field = currentSort.field;
+    const direction = currentSort.direction;
+
+    trips = selectionSort(trips, field, direction);
+}
+
+// Selection sort algorithm implementation
+function selectionSort(trips_array, key, direction = 'asc') {
+    const trip_arr = [...trips_array];
+    const n = trip_arr.length;
+
+    for (let i = 0; i < n - 1; i++) {
+        let actualIndex = i;
+
+        for (let j = i + 1; j < n; j++) {
+            let valueA = trip_arr[j][key];
+            let valueB = trip_arr[actualIndex][key];
+
+            // Handle dates
+            if (valueA instanceof Date) valueA = valueA.getTime();
+            if (valueB instanceof Date) valueB = valueB.getTime();
+
+            // Handle strings
+            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+
+            const condition = direction === 'asc'
+                ? valueA < valueB
+                : valueA > valueB;
+
+            if (condition) {
+                actualIndex = j;
+            }
         }
-        
-        // Handle strings
-        if (typeof valueA === 'string') {
-            valueA = valueA.toLowerCase();
-            valueB = valueB.toLowerCase();
+
+        // Swap elements
+        if (actualIndex !== i) {
+            const temp = trip_arr[i];
+            trip_arr[i] = trip_arr[actualIndex];
+            trip_arr[actualIndex] = temp;
         }
-        
-        if (currentSort.direction === 'asc') {
-            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-        } else {
-            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
-        }
-    });
+    }
+
+    return trip_arr;
 }
 
 // Update trip count display
 function updateTripCount() {
     $('#showing-count').text(trips.length);
     $('#total-count').text(allTrips.length);
+}
+
+// Insights and stories for our dashboard
+function updateInsights() {
+    if (!trips.length) {
+        $('#insights-text').html("<p>No data available for the selected filters.</p>");
+        $('#story-section').html("");
+        return;
+    }
+
+    const totalTrips = trips.length;
+    const totalDuration = trips.reduce((s, t) => s + t.trip_duration, 0);
+    const totalPassengers = trips.reduce((s, t) => s + t.passenger_count, 0);
+    const avgDuration = Math.round(totalDuration / totalTrips / 60);
+    const avgPassengers = (totalPassengers / totalTrips).toFixed(1);
+
+    // Peak hour calculation
+    const hourCounts = {};
+    trips.forEach(t => {
+        const h = t.pickup_datetime.getHours();
+        hourCounts[h] = (hourCounts[h] || 0) + 1;
+    });
+    const [peakHour, peakTrips] = Object.entries(hourCounts).sort((a,b)=>b[1]-a[1])[0];
+
+    // Vendor with most trips
+    const vendorCounts = {};
+    trips.forEach(t => {
+        vendorCounts[t.vendor_id] = (vendorCounts[t.vendor_id] || 0) + 1;
+    });
+    const [topVendor, topVendorTrips] = Object.entries(vendorCounts).sort((a,b)=>b[1]-a[1])[0];
+
+    // Location context
+    const location = $('#filter-location').val();
+    const locationText = location ? ` in <b>${location}</b>` : "";
+
+    $('#insights-text').html(`
+        <div class="insight-card">trips${locationText} had <b>${totalTrips}</b> trips</div>
+        <div class="insight-card">There are <b>${totalTrips}</b> trips analyzed</div>
+        <div class="insight-card">The average duration for a trip is <b>${avgDuration} min</b></div>
+        <div class="insight-card">Average passengers per trip are <b>${avgPassengers}</b></div>
+        <div class="insight-card">Trips mostly occur around <b>${peakHour}:00</b> (${peakTrips} trips)</div>
+        <div class="insight-card">There is a strong preference for <b>Vendor ${topVendor}</b> (${topVendorTrips} trips)</div>
+    `);
+
+    generateStory(avgDuration, avgPassengers, peakHour, location);
+}
+
+function generateStory(avgDuration, avgPassengers, peakHour, location) {
+    let story = "";
+    const area = location ? location.charAt(0).toUpperCase() + location.slice(1) : "the city";
+
+    if (avgDuration < 10) {
+        story += `We see that most trips in ${area} are short, which suggests dense urban mobility zones. `;
+    } else if (avgDuration < 25) {
+        story += `We see that moderate average durations may indicate people moving across nearby neighbourhoods in ${area}. `;
+    } else {
+        story += `We see that there are long trip times in ${area}, indicating citywide or interurban movements. `;
+    }
+
+    if (avgPassengers <= 1.5) {
+        story += `The majority of trips in ${area} carry solo passengers. Most people prefer to travel alone. `;
+    } else {
+        story += "People travelled in groups as evidenced by higher passenger counts to probably share costs or travel with family";
+    }
+
+    story += `There is a flurry of activity around ${peakHour}:00. This pattern shows some preferred common commuting hours.`;
+
+    $('#story-section').html(`<p>${story}</p>`);
 }
