@@ -185,6 +185,17 @@ This will:
 - Create normalized database at `backend/database/nyc_taxi.db`
 - Log excluded records to `backend/logs/excluded_records.log`
 
+### Alternative: Quick Demo with Pre-populated Database
+
+If you want to quickly test the application without processing the full dataset, you can restore from our pre-populated database dump containing 50,000 sample records.
+
+See the [Database README](database/README.md) for instructions on:
+- Restoring the database from the SQL dump
+- Verifying the database integrity
+- Creating new database dumps
+
+This is perfect for demo runs and testing the application functionality.
+
 ---
 
 ## Usage
@@ -319,4 +330,3 @@ Documentation: [Google Docs Link](https://docs.google.com/document/d/1sRXjHF9t4Y
 - **Fadhili Lumumba** - Data Cleaning & Backend Development
 - **Clarence Chomba** - Database Design & API Implementation  
 - **Neville Iregi** - Frontend Development & Visualization
-
