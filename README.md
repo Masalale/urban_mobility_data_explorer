@@ -1,93 +1,168 @@
-# Urban Mobility Data Explorer 🚕# Urban-Mobility-Data-Explorer
+# Urban Mobility Data Explorer
 
 An enterprise-level full-stack application for analyzing and visualizing NYC Taxi Trip data patterns. This project demonstrates data cleaning, database design, backend API development, and interactive frontend visualization.
 
-## 📑 Table of Contents
+---
+
+## Table of Contents
+- [Overview](#overview)
+- [System Architecture](#system-architecture)
+- [Database Design](#database-design)
 - [Features](#features)
-- [Project Structure](#project-structure)
 - [Technology Stack](#technology-stack)
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
+- [Algorithm Implementation](#algorithm-implementation)
+- [Deliverables](#deliverables)
 - [Team](#team)
-- [Documentation](#documentation)
 
-## ✨ Features
+---
 
-- **Data Processing Pipeline**: Automated cleaning and processing of 1.4M+ trip records
-- **Normalized Database**: SQLite database with optimized indexing for efficient queries
-- **RESTful API**: Flask-based backend with multiple filtering endpoints
-- **Interactive Dashboard**: Real-time data visualization with Chart.js
-- **Advanced Filtering**: Filter by vendor, passengers, duration, location, and fare
-- **Responsive Design**: Dark mode support and mobile-friendly interface
-- **Custom Algorithms**: Haversine distance calculation for accurate trip distances
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 urban_mobility_data_explorer/
-├── backend/                    # Backend application
-│   ├── __init__.py
+├── backend/
 │   ├── app.py                 # Flask API server
-│   ├── database/              # Database files and scripts
-│   │   ├── __init__.py
-│   │   ├── db.py             # Database initialization script
-│   │   ├── schema.sql        # Database schema definition
-│   │   └── nyc_taxi.db       # SQLite database (generated)
-│   └── logs/                  # Application logs
-│       ├── cleaning_log.txt
+│   ├── database/
+│   │   ├── db.py              # Database initialization
+│   │   ├── schema.sql         # Database schema
+│   │   └── nyc_taxi.db        # SQLite database
+│   └── logs/
 │       └── excluded_records.log
-│
-├── data/                      # Data files
-│   ├── raw/                   # Original unprocessed data
-│   │   └── train.csv
-│   └── processed/             # Cleaned and processed data
-│       └── clean_trips.csv
-│
-├── scripts/                   # Utility scripts
-│   ├── data_cleaning.py      # Data cleaning pipeline
-│   ├── analyze_db_size.py    # Database analysis tools
-│   └── test.py               # Test scripts
-│
-├── static/                    # Frontend static files
-│   ├── script.js             # JavaScript logic
-│   └── styles.css            # Styling
-│
-├── templates/                 # HTML templates
-│   └── index.html            # Main dashboard
-│
-├── docs/                      # Documentation
-│   └── assignment/           # Assignment documentation
-│
+├── data/
+│   ├── raw/
+│   │   └── train.csv          # Raw dataset
+│   └── processed/
+│       └── clean_trips.csv    # Cleaned dataset
+├── database/
+│   └── database_dump.sql      # SQL dump for distribution
+├── docs/
+│   └── images/
+│       ├── entity_relational_diagram.jpg
+│       └── system_architecture_design.jpg
+├── scripts/
+│   └── data_cleaning.py       # Data cleaning pipeline
+├── static/
+│   ├── script.js              # Frontend logic & algorithm
+│   └── styles.css             # Styling
+├── templates/
+│   └── index.html             # Main dashboard
 ├── requirements.txt           # Python dependencies
-└── README.md                 # This file
+├── setup.py                   # Project setup script
+└── run.py                     # Application entry point
 ```
 
-## 🛠 Technology Stack
+---
+
+## Overview
+
+The Urban Mobility Data Explorer processes, analyzes, and visualizes over 1.4 million NYC taxi trip records. The system provides interactive insights into urban mobility patterns, helping users understand transportation trends, peak hours, and geographic patterns across New York City.
+
+### Problem Statement
+Urban mobility data is complex and difficult to interpret. This application addresses the challenge by:
+- Cleaning and validating raw trip data
+- Implementing efficient data storage with normalized database design
+- Providing intuitive visualizations and filtering capabilities
+- Enabling data-driven insights into city transportation patterns
+
+---
+
+## System Architecture
+
+The application follows a three-tier architecture with clear separation of concerns:
+
+![System Architecture Diagram](docs/images/system_architecture_design.jpg)
+
+### Architecture Components:
+
+1. **Frontend Layer (Presentation)**
+   - HTML5/CSS3/JavaScript interface
+   - Chart.js for data visualization
+   - jQuery for AJAX requests and DOM manipulation
+   - Responsive design with dark mode support
+
+2. **Backend Layer (Application)**
+   - Flask web framework (Python 3.12)
+   - RESTful API endpoints
+   - Business logic and data validation
+   - CORS support for cross-origin requests
+
+3. **Data Layer (Persistence)**
+   - SQLite relational database
+   - Normalized schema (3NF)
+   - Optimized indexes for query performance
+   - Data cleaning pipeline with logging
+
+### Design Decisions:
+- **SQLite** chosen for portability and ease of setup (no separate server required)
+- **Flask** selected for its simplicity and Python ecosystem integration
+- **Client-side rendering** for responsive user experience
+- **Normalized schema** to reduce redundancy and improve data integrity
+
+---
+
+## Database Design
+
+Our database follows a normalized relational design with proper indexing for optimal query performance.
+
+![Entity Relational Diagram](docs/images/entity_relational_diagram.jpg)
+
+### Database Schema:
+
+**Main Tables:**
+1. **trips** - Core trip records with timestamps, duration, and location data
+2. **vendors** - Taxi vendors (e.g., Creative Mobile Technologies, VeriFone Inc.)
+3. **locations** - Pickup/dropoff location zones
+
+**Key Features:**
+- Foreign Keys for referential integrity between tables
+- Multiple indexes on frequently queried columns (vendor_id, pickup_datetime, passenger_count, etc.)
+- 3rd Normal Form (3NF) to eliminate redundancy
+- Derived fields for trip_speed, pickup_hour, distance calculations
+
+---
+
+## Features
+
+- Data Processing Pipeline: Automated cleaning and processing of 1.4M+ trip records
+- Normalized Database: SQLite database with optimized indexing for efficient queries
+- RESTful API: Flask-based backend with multiple filtering endpoints
+- Interactive Dashboard: Real-time data visualization with Chart.js
+- Advanced Filtering: Filter by vendor, passengers, duration, location, and date
+- Responsive Design: Dark mode support and mobile-friendly interface
+- Custom Algorithm: Selection sort implementation for data ordering
+
+---
+
+## Technology Stack
 
 ### Backend
-- **Python 3.12+**
-- **Flask 3.0.0** - Web framework
-- **Flask-CORS 4.0.0** - Cross-origin resource sharing
-- **SQLite** - Database
-- **Pandas 2.1.4** - Data processing
-- **NumPy 1.26.2** - Numerical computations
+- Python 3.12+
+- Flask 3.0.0 - Web framework
+- Flask-CORS 4.0.0 - Cross-origin resource sharing
+- SQLite 3 - Relational database
+- Pandas 2.1.4 - Data processing
+- NumPy 1.26.2 - Numerical computations
 
 ### Frontend
-- **HTML5** - Structure
-- **CSS3** - Styling with CSS variables and dark mode
-- **JavaScript (ES6+)** - Client-side logic
-- **Chart.js 4.4.0** - Data visualization
-- **jQuery 3.7.1** - DOM manipulation
+- HTML5 - Semantic markup
+- CSS3 - Modern styling with CSS variables
+- JavaScript (ES6+) - Client-side logic
+- Chart.js 4.4.0 - Data visualization
+- jQuery 3.7.1 - DOM manipulation and AJAX
 
-## 📥 Installation
+---
+
+## Installation
 
 ### Prerequisites
 - Python 3.12 or higher
 - pip (Python package manager)
 - Git
 
-### Setup Steps
+### Quick Setup
 
 1. **Clone the repository**
    ```bash
@@ -95,80 +170,66 @@ urban_mobility_data_explorer/
    cd urban_mobility_data_explorer
    ```
 
-2. **Create and activate virtual environment**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
+2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run data cleaning pipeline** (if not already done)
+3. **Run setup (processes data and creates database)**
    ```bash
-   python scripts/data_cleaning.py
+   python setup.py
    ```
-   This will:
-   - Load raw data from `data/raw/train.csv`
-   - Clean and validate records
-   - Generate `data/processed/clean_trips.csv`
-   - Log excluded records to `backend/logs/excluded_records.log`
 
-5. **Initialize the database**
-   ```bash
-   python backend/database/db.py
-   ```
-   This creates and populates `backend/database/nyc_taxi.db`
+This will:
+- Clean and process raw data from `data/raw/train.csv`
+- Create normalized database at `backend/database/nyc_taxi.db`
+- Log excluded records to `backend/logs/excluded_records.log`
 
-6. **Start the Flask server**
-   ```bash
-   python backend/app.py
-   ```
-   The server will start at `http://localhost:5000`
+---
 
-7. **Open your browser**
-   Navigate to `http://localhost:5000` to access the dashboard
+## Usage
 
-## 🚀 Usage
-
-### Running the Application
+### Starting the Application
 
 ```bash
-# Make sure virtual environment is activated
-source .venv/bin/activate
-
-# Start the backend server
-python backend/app.py
+python run.py
 ```
 
-The dashboard will be available at: `http://localhost:5000`
+The application will be available at `http://localhost:5000`
 
-### Data Processing
+### Using the Dashboard
 
-To reprocess the data with different parameters:
+1. **Overview Statistics**: View total trips, average duration, and passenger counts
+2. **Filter Data**: Use filters to narrow down trips by:
+   - Trip ID search
+   - Vendor
+   - Passenger count
+   - Duration range
+   - Month
+   - Location
+3. **Visualizations**: Interactive charts showing:
+   - Trip duration distribution
+   - Passenger count distribution
+   - Trips by hour of day
+   - Geographic pickup locations
+4. **Data Table**: Sortable table with all trip details
 
-```bash
-python scripts/data_cleaning.py
-python backend/database/db.py
-```
+---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET | `/` | Serve main dashboard | - |
-| GET | `/api/trips` | Get all trips (limited to 100) | - |
-| GET | `/api/trips/<trip_id>` | Get specific trip by ID | `trip_id` (path) |
-| GET | `/api/fares` | Get fare records | - |
-| GET | `/api/trips/by_date` | Filter trips by date | `date` (YYYY-MM-DD) |
-| GET | `/api/trips/by_distance` | Filter by distance range | `min`, `max` (km) |
+| Method | Endpoint                 | Description              | Parameters          |
+|--------|--------------------------|--------------------------|---------------------|
+| GET    | `/`                      | Serve main dashboard     | -                   |
+| GET    | `/api/trips`             | Get first 100 trips      | -                   |
+| GET    | `/api/trips/<trip_id>`   | Get specific trip by ID  | `trip_id` (path)    |
+| GET    | `/api/trips/by_date`     | Filter trips by date     | `date` (YYYY-MM-DD) |
+| GET    | `/api/trips/by_distance` | Filter by distance range | `min`, `max` (km)   |
 
 ### Example API Calls
 
 ```bash
-# Get all trips
+# Get all trips (limited to 100)
 curl http://localhost:5000/api/trips
 
 # Get trip by ID
@@ -177,88 +238,85 @@ curl http://localhost:5000/api/trips/id2875421
 # Filter by date
 curl "http://localhost:5000/api/trips/by_date?date=2016-03-14"
 
-# Filter by distance
+# Filter by distance (2-5 km)
 curl "http://localhost:5000/api/trips/by_distance?min=2&max=5"
 ```
 
-## 👥 Team
+---
 
-- **[Your Name]** - [Role/Contribution]
-- **[Team Member 2]** - [Role/Contribution]
-- **[Team Member 3]** - [Role/Contribution]
+## Algorithm Implementation
 
-## 📚 Documentation
+### Selection Sort Algorithm
 
-- **Technical Report**: See `docs/assignment/` folder
-- **Video Walkthrough**: [Add link to video]
-- **Assignment Brief**: `docs/assignment/Summative - Urban Mobility Data Explorer.md`
+As required by the assignment, we implemented a **custom selection sort algorithm** from scratch for sorting trip data in the frontend.
 
-## 🧪 Testing
+**Location**: `static/script.js`
 
-```bash
-# Run test scripts
-python scripts/test.py
+**Purpose**: Sort trip records by any field (duration, passengers, date, etc.) without using built-in JavaScript sort methods.
 
-# Analyze database
-python scripts/analyze_db_size.py
+**Implementation Details**:
+
+The algorithm sorts an array of trip objects by a specified key and direction:
+
+```javascript
+function selectionSort(trips_array, key, direction = 'asc') {
+    const trip_arr = [...trips_array];
+    const n = trip_arr.length;
+
+    for (let i = 0; i < n - 1; i++) {
+        let actualIndex = i;
+
+        for (let j = i + 1; j < n; j++) {
+            // Find minimum/maximum element
+            let valueA = trip_arr[j][key];
+            let valueB = trip_arr[actualIndex][key];
+
+            // Handle different data types (dates, strings, numbers)
+            if (valueA instanceof Date) valueA = valueA.getTime();
+            if (valueB instanceof Date) valueB = valueB.getTime();
+            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+
+            const condition = direction === 'asc' ? valueA < valueB : valueA > valueB;
+            if (condition) actualIndex = j;
+        }
+
+        // Swap elements
+        if (actualIndex !== i) {
+            const temp = trip_arr[i];
+            trip_arr[i] = trip_arr[actualIndex];
+            trip_arr[actualIndex] = temp;
+        }
+    }
+
+    return trip_arr;
+}
 ```
 
-## 🔧 Development
+**Complexity Analysis**:
+- **Time Complexity**: O(n²) - nested loops iterate through array
+- **Space Complexity**: O(n) - creates copy of input array
+- **Stable**: No - relative order of equal elements may change
+- **In-place**: No - creates new array copy
 
-### Adding New Features
-
-1. **New API Endpoint**: Add route in `backend/app.py`
-2. **Database Changes**: Update `backend/database/schema.sql` and `db.py`
-3. **Frontend Updates**: Modify `static/script.js` and `templates/index.html`
-
-### Code Style
-- Follow PEP 8 for Python code
-- Use meaningful variable names
-- Comment complex logic
-- Keep functions focused and small
-
-## 📊 Data Features
-
-### Derived Features
-1. **trip_distance** - Calculated using Haversine formula for accurate geographic distance
-2. **trip_speed** - Average speed in km/h: `(distance / duration) * 3600`
-3. **pickup_hour** - Hour of pickup (0-23) for time-based analysis
-4. **is_pickup_weekend** - Boolean indicator for weekend trips
-5. **is_pickup_peak_hour** - Boolean for peak traffic hours (7-9 AM, 4-6 PM)
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Issue**: `ModuleNotFoundError: No module named 'flask'`
-- **Solution**: Ensure virtual environment is activated and dependencies are installed
-  ```bash
-  source .venv/bin/activate
-  pip install -r requirements.txt
-  ```
-
-**Issue**: Database not found error
-- **Solution**: Run database initialization script
-  ```bash
-  python backend/database/db.py
-  ```
-
-**Issue**: No data showing in dashboard
-- **Solution**: Check that:
-  1. Backend server is running
-  2. Database exists at `backend/database/nyc_taxi.db`
-  3. Browser console for JavaScript errors
-
-## 📝 License
-
-This project is created for educational purposes as part of ALU Enterprise Web Development course.
-
-## 🙏 Acknowledgments
-
-- NYC Taxi & Limousine Commission for the dataset
-- ALU Enterprise Web Development Course
-- Chart.js for visualization library
+**Why Selection Sort?**:
+Selection sort is simple to implement and understand, making it ideal for educational purposes. While not the most efficient for large datasets, it demonstrates fundamental algorithm design principles.
 
 ---
 
-**Last Updated**: October 15, 2025
+## Deliverables
+
+Video Presentation: [YouTube Link](https://youtu.be/your_video_link)
+
+Documentation: [Google Docs Link](https://docs.google.com/document/d/your_doc_link)
+
+---
+
+## Team
+
+**Project Contributors:**
+
+- **Fadhili Lumumba** - Data Cleaning & Backend Development
+- **Clarence Chomba** - Database Design & API Implementation  
+- **Neville Iregi** - Frontend Development & Visualization
+
