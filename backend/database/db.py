@@ -22,6 +22,10 @@ def create_database(db_path='backend/database/nyc_taxi.db',
     cursor = conn.cursor()
     cursor.execute('PRAGMA foreign_keys = ON')
     cursor.execute('PRAGMA journal_mode = WAL')
+    
+    # Performance optimizations for faster queries
+    cursor.execute('PRAGMA cache_size = -64000')
+    cursor.execute('PRAGMA temp_store = MEMORY')
 
     # Apply the schema
     print(f"\nLoading schema from {schema_path}")
@@ -58,9 +62,9 @@ def create_database(db_path='backend/database/nyc_taxi.db',
     df = df.rename(columns={'id': 'trip_id'})
     required_columns[0] = 'trip_id'
     
-    # Insert into database
+    # Insert into database in batches of 150,000 rows
     print(f"\nInserting {len(df):,} trips into database")
-    batch_size = 10000
+    batch_size = 150000
     for i in range(0, len(df), batch_size):
         batch = df[required_columns].iloc[i:i+batch_size]
         batch.to_sql('trips', conn, if_exists='append', index=False)

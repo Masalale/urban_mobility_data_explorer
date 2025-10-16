@@ -150,7 +150,7 @@ pickup_conditions = [
     (df['pickup_latitude'].between(40.82, 40.90)) & (df['pickup_longitude'].between(-73.93, -73.85))
 ]
 pickup_choices = ['midtown', 'downtown', 'uptown', 'brooklyn', 'queens', 'bronx']
-df['pickup_zone'] = np.select(pickup_conditions, pickup_choices, default=None)
+df['pickup_zone'] = np.select(pickup_conditions, pickup_choices, default=np.nan)
 
 dropoff_conditions = [
     (df['dropoff_latitude'].between(40.74, 40.77)) & (df['dropoff_longitude'].between(-74.00, -73.97)),
@@ -160,7 +160,7 @@ dropoff_conditions = [
     (df['dropoff_latitude'].between(40.68, 40.78)) & (df['dropoff_longitude'].between(-73.95, -73.75)),
     (df['dropoff_latitude'].between(40.82, 40.90)) & (df['dropoff_longitude'].between(-73.93, -73.85))
 ]
-df['dropoff_zone'] = np.select(dropoff_conditions, pickup_choices, default=None)
+df['dropoff_zone'] = np.select(dropoff_conditions, pickup_choices, default=np.nan)
 
 print("Zone mapping complete")
 
